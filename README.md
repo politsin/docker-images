@@ -1,2 +1,5 @@
-# docker-build
-php, backup, exim, mattermost
+# Docker images
+- php
+- backup
+- exim
+- mattermost
