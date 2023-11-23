@@ -28,6 +28,7 @@ RUN apt update -y && \
                    putty \
                    unzip \
                    ssmtp \
+                   ffmpeg \
                    sshpass \
                    imagemagick &&  \
     apt install -y sqlite3 \
