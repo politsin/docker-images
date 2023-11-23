@@ -1,0 +1,18 @@
+{
+  "require": {
+    "php": "^8.2"
+  },
+  "extra": {
+    "patches": {}
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "cweagans/composer-patches": true
+    }
+  }
+}
