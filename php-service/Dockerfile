@@ -66,31 +66,28 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
                    php${PHP}-zip \
                    php${PHP}-xml \
                    php${PHP}-curl \
-                   php${PHP}-json \
+                   php${PHP}-ssh2 \
                    php${PHP}-mysql \
                    php${PHP}-pgsql \
+                   php${PHP}-redis \
+                   php${PHP}-sqlite3 \
                    php${PHP}-mbstring \
-                   php-pear \
-                   php-ssh2 \
-                   php-redis \
-                   php-sqlite3 && \
+                   php-pear && \
     # Extras:
     apt install -y php${PHP}-gd  \
                    php${PHP}-bz2 \
-                   php${PHP}-cgi \
                    php${PHP}-gmp \
                    php${PHP}-fpm \
                    php${PHP}-apcu \
-                   php${PHP}-soap \
                    php${PHP}-imap \
                    php${PHP}-intl \
                    php${PHP}-ldap \
+                   php${PHP}-soap \
                    php${PHP}-phpdbg \
                    php${PHP}-xmlrpc \
                    php${PHP}-xdebug \
                    php${PHP}-bcmath \
                    php${PHP}-imagick \
-                   php${PHP}-opcache \
                    php${PHP}-memcached && \
     apt autoremove -y && \
     apt clean && \
