@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="8.2"
+VERSION="8.1"
 BUILD="0"
 
 # cd /opt/build/docker-php

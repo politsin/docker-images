@@ -1,6 +1,9 @@
 FROM ubuntu:20.04
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
+ARG PHP="8.1"
+ARG DIO="0.2.1"
+
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -sf /bin/true /sbin/initctl
@@ -56,40 +59,39 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 #PHP:::
 RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt update && \
-    apt install -y php8.2 \
-                   php8.2-cli \
-                   php8.2-dev \
-                   php8.2-dom \
-                   php8.2-zip \
-                   php8.2-xml \
-                   php8.2-curl \
-                   php8.2-mysql \
-                   php8.2-pgsql \
-                   php8.2-mbstring \
-                   php-xml \
-                   php-json \
+    apt install -y php${PHP} \
+                   php${PHP}-cli \
+                   php${PHP}-dev \
+                   php${PHP}-dom \
+                   php${PHP}-zip \
+                   php${PHP}-xml \
+                   php${PHP}-curl \
+                   php${PHP}-json \
+                   php${PHP}-mysql \
+                   php${PHP}-pgsql \
+                   php${PHP}-mbstring \
                    php-pear \
                    php-ssh2 \
                    php-redis \
                    php-sqlite3 && \
     # Extras:
-    apt install -y php8.2-gd  \
-                   php8.2-bz2 \
-                   php8.2-cgi \
-                   php8.2-gmp \
-                   php8.2-fpm \
-                   php8.2-apcu \
-                   php8.2-soap \
-                   php8.2-imap \
-                   php8.2-intl \
-                   php8.2-ldap \
-                   php8.2-phpdbg \
-                   php8.2-xmlrpc \
-                   php8.2-xdebug \
-                   php8.2-bcmath \
-                   php8.2-imagick \
-                   php8.2-opcache \
-                   php8.2-memcached && \
+    apt install -y php${PHP}-gd  \
+                   php${PHP}-bz2 \
+                   php${PHP}-cgi \
+                   php${PHP}-gmp \
+                   php${PHP}-fpm \
+                   php${PHP}-apcu \
+                   php${PHP}-soap \
+                   php${PHP}-imap \
+                   php${PHP}-intl \
+                   php${PHP}-ldap \
+                   php${PHP}-phpdbg \
+                   php${PHP}-xmlrpc \
+                   php${PHP}-xdebug \
+                   php${PHP}-bcmath \
+                   php${PHP}-imagick \
+                   php${PHP}-opcache \
+                   php${PHP}-memcached && \
     apt autoremove -y && \
     apt clean && \
     apt autoclean && \
@@ -98,7 +100,7 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     rm -rf /usr/share/man/??_*
 
 # Disable php-xdebug:::
-RUN echo '' > /etc/php/8.2/mods-available/xdebug.ini
+RUN echo '' > /etc/php/${PHP}/mods-available/xdebug.ini
 
 #Redis:::
 RUN pecl channel-update pecl.php.net
@@ -106,14 +108,14 @@ RUN pecl install -f -o redis
 
 #gRPC:::
 RUN pecl install grpc && \
-    echo 'extension=grpc.so' > /etc/php/8.2/mods-available/grpc.ini && \
-    ln -s /etc/php/8.2/mods-available/grpc.ini /etc/php/8.2/fpm/conf.d/20-grpc.ini && \
-    ln -s /etc/php/8.2/mods-available/grpc.ini /etc/php/8.2/cli/conf.d/20-grpc.ini
+    echo 'extension=grpc.so' > /etc/php/${PHP}/mods-available/grpc.ini && \
+    ln -s /etc/php/${PHP}/mods-available/grpc.ini /etc/php/${PHP}/fpm/conf.d/20-grpc.ini && \
+    ln -s /etc/php/${PHP}/mods-available/grpc.ini /etc/php/${PHP}/cli/conf.d/20-grpc.ini
 
 #DIO `pecl install dio` # OR
-RUN pecl install channel://pecl.php.net/dio-0.2.1 && \
-    echo 'extension=dio.so' > /etc/php/8.2/mods-available/dio.ini && \
-    ln -s /etc/php/8.2/mods-available/dio.ini /etc/php/8.2/cli/conf.d/20-dio.ini
+RUN pecl install channel://pecl.php.net/dio-${DIO} && \
+    echo 'extension=dio.so' > /etc/php/${PHP}/mods-available/dio.ini && \
+    ln -s /etc/php/${PHP}/mods-available/dio.ini /etc/php/${PHP}/cli/conf.d/20-dio.ini
 
 #DRUSH:::
 RUN wget https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar -q -O drush && \
