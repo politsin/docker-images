@@ -1,11 +1,14 @@
-FROM alpine:edge
+FROM ubuntu:20.04
+
+ARG MMOST="9.2.2"
 
 #Install:::
-RUN wget https://releases.mattermost.com/9.2.2/mattermost-9.2.2-linux-amd64.tar.gz && \
+RUN wget https://releases.mattermost.com/${MMOST}/mattermost-${MMOST}-linux-amd64.tar.gz && \
     tar -xvzf mattermost*.gz && \
     mv mattermost /opt && \
     rm mattermost*.gz && \
-    mkdir /opt/mattermost/data
+    mkdir /opt/mattermost/data && \
+    chmod +x /opt/mattermost/bin/mattermost
 
 # Expose Ports
 EXPOSE 8065

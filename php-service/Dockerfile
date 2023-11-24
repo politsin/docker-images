@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
-ARG PHP="8.1"
+ARG PHP="8.2"
 ARG DIO="0.2.1"
 
 # Surpress Upstart errors/warning
