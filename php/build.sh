@@ -1,9 +1,14 @@
 #!/bin/bash
 
+VERSION="8.1"
+BUILD="251"
+
 # cd /opt/build/docker-php
-docker build . -t synstd/php
-docker tag synstd/php synstd/php:8.1
-docker tag synstd/php synstd/php:8.1.250
-docker push synstd/php
-docker push synstd/php:8.1
-docker push synstd/php:8.1.250
+if docker build . -t synstd/php ; then
+  docker tag synstd/php synstd/php:$VERSION
+  docker tag synstd/php synstd/php:$VERSION-amd64
+  docker tag synstd/php synstd/php:$VERSION.$BUILD
+  docker push synstd/php:$VERSION
+  docker push synstd/php:$VERSION-amd64
+  docker push synstd/php:$VERSION.$BUILD
+fi
