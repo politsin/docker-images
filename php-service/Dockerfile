@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
-ARG PHP="8.2"
+ARG PHP="8.1"
 ARG DIO="0.2.1"
 
 # Surpress Upstart errors/warning
@@ -47,7 +47,7 @@ RUN apt update -y && \
     rm -rf /usr/share/man/?? && \
     rm -rf /usr/share/man/??_*
 
-#APT postgresql-15:::
+# APT postgresql-15:::
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list && \
     apt update && \
@@ -56,7 +56,7 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
     apt clean && \
     apt autoclean
 
-#PHP:::
+#  PHP:::
 RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt update && \
     apt install -y php${PHP} \
@@ -99,33 +99,38 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
 # Disable php-xdebug:::
 RUN echo '' > /etc/php/${PHP}/mods-available/xdebug.ini
 
-#Redis:::
+# Redis:::
 RUN pecl channel-update pecl.php.net
 RUN pecl install -f -o redis
 
-#gRPC:::
+# gRPC:::
 RUN pecl install grpc && \
     echo 'extension=grpc.so' > /etc/php/${PHP}/mods-available/grpc.ini && \
     ln -s /etc/php/${PHP}/mods-available/grpc.ini /etc/php/${PHP}/fpm/conf.d/20-grpc.ini && \
     ln -s /etc/php/${PHP}/mods-available/grpc.ini /etc/php/${PHP}/cli/conf.d/20-grpc.ini
 
-#DIO `pecl install dio` # OR
+# Uploadprogress:::
+RUN pecl install uploadprogress && \
+    echo 'extension=uploadprogress.so' > /etc/php/${PHP}/mods-available/uploadprogress.ini && \
+    ln -s /etc/php/{PHP}/mods-available/uploadprogress.ini /etc/php/${PHP}/fpm/conf.d/20-uploadprogress.ini
+
+# DIO `pecl install dio` # OR
 RUN pecl install channel://pecl.php.net/dio-${DIO} && \
     echo 'extension=dio.so' > /etc/php/${PHP}/mods-available/dio.ini && \
     ln -s /etc/php/${PHP}/mods-available/dio.ini /etc/php/${PHP}/cli/conf.d/20-dio.ini
 
-#DRUSH:::
+# DRUSH:::
 RUN wget https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar -q -O drush && \
     chmod +x drush && \
     mv drush /usr/local/bin/drush
 
-#Composer:::
+# Composer:::
 RUN wget https://getcomposer.org/installer -q -O composer-setup.php && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
     chmod +x /usr/local/bin/composer
 
 
-#COPY script & config:::
+# COPY script & config:::
 RUN php --ini
 COPY service /opt/app/php/service
 RUN composer install -d /opt/app/php/service

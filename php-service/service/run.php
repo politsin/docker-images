@@ -10,5 +10,5 @@ while (TRUE) {
   $date = (new DateTime('now'))->format('H:i:s.v');
   echo "$date | $memory bytes\n";
   // Microseconds.
-  usleep(5 * 1000);
+  usleep(500 * 1000);
 }
