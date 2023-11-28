@@ -65,16 +65,16 @@ RUN cd /var && \
 
 
 # COPY PHP-VER-config:::
-COPY config/php${PHP}/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
-COPY config/php${PHP}/php/php.ini /etc/php/${PHP}/fpm/php.ini
 COPY config/php${PHP}/php/php-fpm.conf /etc/php/${PHP}/fpm/php-fpm.conf
-COPY config/php${PHP}/php/opcache.ini /etc/php/${PHP}/mods-available/opcache.ini
 COPY config/php${PHP}/supervisor/supervisord.conf /etc/supervisord.conf
 
 # COPY script & config:::
 COPY config/bash/.bashrc /root/.bashrc
 COPY config/bash/.bash_profile /root/.bash_profile
 COPY config/cron/www-data /var/spool/cron/crontabs/www-data
+COPY config/php/php.ini /etc/php/${PHP}/fpm/php.ini
+COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
+COPY config/php/opcache.ini /etc/php/${PHP}/mods-available/opcache.ini
 COPY config/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY config/start.sh /start.sh
 

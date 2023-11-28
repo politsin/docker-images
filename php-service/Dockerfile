@@ -27,6 +27,7 @@ RUN apt update -y && \
                    nano \
                    ncdu \
                    sass \
+                   sudo \
                    wget \
                    putty \
                    unzip \
