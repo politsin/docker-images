@@ -2,12 +2,12 @@
 
 namespace App\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Bluerhinos\phpMQTT;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Process\Process;
-use Bluerhinos\phpMQTT;
 
 /**
  * Default StoreTemplate.
@@ -16,9 +16,9 @@ class CommandBase extends Command {
 
   const CHANNELS_FOR_TYPES = [
     'OK' => ['console'],
-    'FAIL' => ['console', 'telega', 'slack'],
+    'FAIL' => ['console', 'telega', 'webhook'],
     'START' => ['console'],
-    'STOP' => ['console', 'slack'],
+    'STOP' => ['console', 'webhook'],
   ];
   const EMOJI_FOR_CHANELS = [
     'console' => [
@@ -27,7 +27,7 @@ class CommandBase extends Command {
       'START' => "🚀",
       'STOP' => "☘️",
     ],
-    'slack' => [
+    'webhook' => [
       'OK' => NULL,
       'FAIL' => ':fire: @all',
       'START' => ':rocket:',
@@ -118,8 +118,8 @@ class CommandBase extends Command {
         );
         break;
 
-      case 'slack':
-        $result = $this->slack([
+      case 'webhook':
+        $result = $this->webhook([
           'text' => $message,
         ]);
         break;
@@ -135,7 +135,7 @@ class CommandBase extends Command {
   }
 
   /**
-   * Mattermost / slack Guzzle.
+   * Mattermost / webhook Guzzle.
    */
   private function telega(string $message) {
     $client = new Client([
@@ -161,9 +161,9 @@ class CommandBase extends Command {
   }
 
   /**
-   * Mattermost / slack Guzzle.
+   * Mattermost / webhook Guzzle.
    */
-  private function slack(array $payload) : string {
+  private function webhook(array $payload) : string {
     $webhook = "{$_ENV['MATTERMOST_HOST']}/{$_ENV['MATTERMOST_HOOK']}";
     $payload['text'] = str_replace("%", "%25", $payload['text']);
     $payload['text'] = str_replace("&", "%26", $payload['text']);

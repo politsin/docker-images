@@ -65,27 +65,32 @@ RUN cd /var && \
 
 
 # COPY PHP-VER-config:::
+RUN ln -sf /usr/sbin/php-fpm${PHP} /usr/sbin/php-fpm
 COPY config/php${PHP}/php/php-fpm.conf /etc/php/${PHP}/fpm/php-fpm.conf
-COPY config/php${PHP}/supervisor/supervisord.conf /etc/supervisord.conf
+COPY config/php/php.ini /etc/php/${PHP}/fpm/php.ini
+COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
+COPY config/php/opcache.ini /etc/php/${PHP}/mods-available/opcache.ini
 
 # COPY script & config:::
 COPY config/bash/.bashrc /root/.bashrc
 COPY config/bash/.bash_profile /root/.bash_profile
 COPY config/cron/www-data /var/spool/cron/crontabs/www-data
-COPY config/php/php.ini /etc/php/${PHP}/fpm/php.ini
-COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
-COPY config/php/opcache.ini /etc/php/${PHP}/mods-available/opcache.ini
+COPY config/supervisor/supervisord.conf /etc/supervisord.conf
 COPY config/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
 COPY config/start.sh /start.sh
+
 
 # Fix ownership
 RUN chmod 755 /start.sh && \
     mkdir /run/sshd && \
     mkdir /run/php && \
+    chmod -R 0755 /run/php \
     chown -R www-data.www-data /run/php && \
     chown www-data.www-data /var/spool/cron/crontabs/www-data && \
     chmod 0777 /var/spool/cron/crontabs && \
-    chmod 0600 /var/spool/cron/crontabs/www-data
+    chmod 0600 /var/spool/cron/crontabs/www-data && \
+    usermod -d /var/www/ www-data && \
+    chsh -s /bin/bash www-data
 
 # Permit ssh login with password (auth key only)
 RUN sed -i "s/#PasswordAuthentication.*/PasswordAuthentication no/g" /etc/ssh/sshd_config

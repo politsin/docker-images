@@ -6,20 +6,20 @@
 # www-data user
 FILE=/var/www/chown
 if [ -e "$FILE" ]; then
-   echo "File $FILE exists."
+  chown -Rf www-data:www-data /var/www/.ssh
+  chmod 600 /var/www/.ssh/authorized_keys
+  echo "File $FILE exists."
 else
-  usermod -d /var/www/ www-data
-  chsh -s /bin/bash www-data
   chown www-data:www-data /var/www/
   chown www-data:www-data /var/www/html
+  chown www-data:www-data /var/www/opcache
   chown www-data:www-data /var/www/.bash_profile
   chown www-data:www-data /var/www/.bashrc
   chown www-data:www-data /var/www/.gitconfig
-  # chown -Rf www-data.www-data /var/www/html - too slow
   chown -Rf www-data:www-data /var/www/.drush
-  chown -Rf www-data:www-data /var/www/.composer
-  chown -Rf www-data:www-data /var/www/.ssh
 
+  # ssh
+  chown -Rf www-data:www-data /var/www/.ssh
   chmod 600 /var/www/.ssh/authorized_keys
 
   # cron
@@ -27,12 +27,9 @@ else
   chmod 0777 /var/spool/cron/crontabs
   chmod 0600 /var/spool/cron/crontabs/www-data
 
-  # php-fpm socket
-  mkdir -p /run/php/
-  chmod -R 0755 /run/php/
-  chown -R www-data:www-data /var/run/php
-  # mysql socket
-  chmod -R 0777 /var/run/mysqld
+  # Sockets
+  chmod -R 0777 /run/php
+  chmod -R 0777 /run/mysqld
 
   # Done
   echo "done" > $FILE
