@@ -65,11 +65,12 @@ RUN cd /var && \
 
 
 # COPY PHP-VER-config:::
-RUN ln -sf /usr/sbin/php-fpm${PHP} /usr/sbin/php-fpm
-COPY config/php${PHP}/php/php-fpm.conf /etc/php/${PHP}/fpm/php-fpm.conf
-COPY config/php/php.ini /etc/php/${PHP}/fpm/php.ini
 COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
+COPY config/php/php.ini /etc/php/${PHP}/fpm/php.ini
 COPY config/php/opcache.ini /etc/php/${PHP}/mods-available/opcache.ini
+COPY config/php/php/php-fpm.conf /etc/php/${PHP}/fpm/php-fpm.conf
+RUN sed -i "s/-PHP-/${PHP}/g" /etc/php/${PHP}/fpm/php-fpm.conf
+RUN ln -sf /usr/sbin/php-fpm${PHP} /usr/sbin/php-fpm
 
 # COPY script & config:::
 COPY config/bash/.bashrc /root/.bashrc
