@@ -2,13 +2,13 @@
 
 namespace App\Command;
 
+use App\Step\DownloadBackupStep;
+use App\Step\RemoveDumpFileStep;
+use App\Step\RestoreDbDumpStep;
+use App\Step\WriteSettingsStep;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use App\Step\DownloadBackupStep;
-use App\Step\WriteSettingsStep;
-use App\Step\RestoreDbDumpStep;
-use App\Step\RemoveDumpFileStep;
 
 /**
  * S3 Restore.

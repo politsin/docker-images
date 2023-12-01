@@ -7,12 +7,17 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
 
 /**
  * Default StoreTemplate.
  */
 class CommandBase extends Command {
+
+  //phpcs:disable
+  protected SymfonyStyle $io;
+  //phpcs:enable
 
   const CHANNELS_FOR_TYPES = [
     'OK' => ['console'],
@@ -135,7 +140,7 @@ class CommandBase extends Command {
   }
 
   /**
-   * Mattermost / webhook Guzzle.
+   * Telega.
    */
   private function telega(string $message) {
     $client = new Client([

@@ -2,13 +2,13 @@
 
 namespace App\Command;
 
+use App\Step\ArchiveStep;
+use App\Step\CreateDbDumpStep;
+use App\Step\RemoveDumpFileStep;
+use App\Step\SetTimezoneStep;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use App\Step\SetTimezoneStep;
-use App\Step\CreateDbDumpStep;
-use App\Step\ArchiveStep;
-use App\Step\RemoveDumpFileStep;
 
 /**
  * Echo.
