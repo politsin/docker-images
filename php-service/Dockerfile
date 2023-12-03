@@ -12,7 +12,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # APT install:::
 RUN apt update -y && \
-    apt install -y dnsutils \
+    apt install -y software-properties-common \
+                   dnsutils \
                    apt-utils \
                    net-tools \
                    inetutils-ping && \
@@ -97,6 +98,7 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     rm -rf /usr/share/man/??_*
 
 # Disable php-xdebug:::
+RUN mkdir /1/2/3
 RUN echo '' > /etc/php/${PHP}/mods-available/xdebug.ini
 
 # Redis:::
