@@ -12,8 +12,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # APT install:::
 RUN apt update -y && \
-    apt install -y software-properties-common \
-                   dnsutils \
+    apt install -y dnsutils \
                    apt-utils \
                    net-tools \
                    inetutils-ping && \
