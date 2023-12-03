@@ -18,6 +18,11 @@ RUN apt update -y && \
     apt install -y cron \
                    supervisor \
                    openssh-server &&  \
+    rm -f /etc/cron.d/e2scrub_all && \
+    rm -f /etc/cron.daily/* && \
+    rm -f /etc/cron.hourly/* && \
+    rm -f /etc/cron.monthly/* && \
+    rm -f /etc/cron.weekly/* && \
     apt autoremove -y && \
     apt clean && \
     apt autoclean && \
