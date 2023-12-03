@@ -60,8 +60,9 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 #  PHP:::
 RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt update && \
-    apt install -y php${PHP} \
-                   php${PHP}-cli \
+    apt install -y php${PHP} --no-install-recommends --dry-run && \
+	apt purge apache2 apache2-bin && \
+    apt install -y php${PHP}-cli \
                    php${PHP}-dev \
                    php${PHP}-dom \
                    php${PHP}-zip \
