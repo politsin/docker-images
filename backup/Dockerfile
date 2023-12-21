@@ -13,8 +13,6 @@ RUN mkdir /var/www && \
   sudo -u www-data mkdir /var/www/opcache && \
   composer install -d /opt/console && \
   ls /opt/console/vendor && \
-
-#Fix ownership
-RUN chmod 755 /opt/console/console.php
+  chmod 755 /opt/console/console.php
 
 ENTRYPOINT ["/usr/bin/php", "/opt/console/console.php"]
