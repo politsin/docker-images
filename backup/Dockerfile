@@ -14,6 +14,7 @@ RUN mkdir /var/www && \
   sudo -u www-data mkdir /var/www/opcache && \
   sudo -u www-data composer install -d /opt/console && \
   sudo -u www-data ls /opt/console/vendor && \
-  sudo -u www-data chmod 755 /opt/console/console.php
+  sudo -u www-data chmod 755 /opt/console/console.php && \
+  rm -rf ~/.composer
 
 ENTRYPOINT ["/usr/bin/php", "/opt/console/console.php"]
