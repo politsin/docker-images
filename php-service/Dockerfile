@@ -121,11 +121,6 @@ RUN pecl install channel://pecl.php.net/dio-${DIO} && \
     echo 'extension=dio.so' > /etc/php/${PHP}/mods-available/dio.ini && \
     ln -s /etc/php/${PHP}/mods-available/dio.ini /etc/php/${PHP}/cli/conf.d/20-dio.ini
 
-# DRUSH:::
-RUN wget https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar -q -O drush && \
-    chmod +x drush && \
-    mv drush /usr/local/bin/drush
-
 # Composer:::
 RUN wget https://getcomposer.org/installer -q -O composer-setup.php && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
