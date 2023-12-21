@@ -50,7 +50,6 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     npm install -g npm && \
     npm -v
 
-
 # Init:::
 RUN npm i -g yarn && \
     npm i -g gulp-cli && \
@@ -67,7 +66,6 @@ RUN cd /var && \
     npm i gulp-sourcemaps && \
     npm i gulp-sass@npm:@selfisekai/gulp-sass && \
     npm i webpack webpack-dev-server
-
 
 # COPY PHP-VER-config:::
 COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
@@ -100,6 +98,9 @@ RUN chmod 755 /start.sh && \
 
 # Permit ssh login with password (auth key only)
 RUN sed -i "s/#PasswordAuthentication.*/PasswordAuthentication no/g" /etc/ssh/sshd_config
+
+# Composer bin to environment
+RUN sed -i 's/usr\/local\/games/var\/www\/html\/vendor\/bin/g' /etc/environment
 
 # Expose Ports
 EXPOSE 22
