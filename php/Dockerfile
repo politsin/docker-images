@@ -17,8 +17,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt update -y && \
     apt install -y cron \
                    supervisor \
-                   openssh-server &&  \
-    rm -f /etc/cron.d/e2scrub_all && \
+                   openssh-server && \
+    rm -f /etc/cron.d/* && \
     rm -f /etc/cron.daily/* && \
     rm -f /etc/cron.hourly/* && \
     rm -f /etc/cron.monthly/* && \
@@ -41,7 +41,7 @@ RUN mkdir /var/lib/composer && \
     /var/lib/composer/vendor/bin/phpcs --config-set default_standard Drupal && \
     /var/lib/composer/vendor/bin/phpcs --config-show
 
-#NodeJS:::
+# NodeJS:::
 RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     chmod 500 nsolid_setup_deb.sh && \
     ./nsolid_setup_deb.sh ${NODE} && \
@@ -51,12 +51,12 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     npm -v
 
 
-#Init:::
+# Init:::
 RUN npm i -g yarn && \
     npm i -g gulp-cli && \
     npm i -g webpack-cli
 
-#GulpPacs:::
+# GulpPacs:::
 RUN cd /var && \
     npm init --yes && \
     npm i gulp && \
