@@ -11,8 +11,8 @@ COPY console /opt/console
 RUN mkdir /var/www && \
   chown www-data:www-data /var/www && \
   sudo -u www-data mkdir /var/www/opcache && \
-  composer install -d /opt/console && \
-  ls /opt/console/vendor && \
-  chmod 755 /opt/console/console.php
+  sudo -u www-data composer install -d /opt/console && \
+  sudo -u www-data ls /opt/console/vendor && \
+  sudo -u www-data chmod 755 /opt/console/console.php
 
 ENTRYPOINT ["/usr/bin/php", "/opt/console/console.php"]
