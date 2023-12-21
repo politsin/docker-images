@@ -13,8 +13,18 @@ class CreateDbDumpDrushStep extends StepBase {
   /**
    * Run.
    */
-  public function run() : bool {
-    $drush = sprintf('/usr/local/bin/drush --root=%s', self::SITE_ROOT);
+  public function run() : bool | NULL {
+    $drush = '/var/www/html/vendor/bin/drush';
+    if (is_file($drush) && is_executable($drush)) {
+      $ver = shell_exec('drush --version | grep Drush | awk \'{print $4}\'');
+      $version = intval(strstr($ver, ".", TRUE));
+      print "Drush version: $ver";
+    }
+    if (!is_file($drush) || ($version ?? 0) < 9) {
+      return NULL;
+    }
+
+    $drush = "$drush --root=" . self::SITE_ROOT;
     $dbfile = $_ENV['DBFILE'] ?? implode('/', [self::SITE_ROOT, self::DUMP_FILE_NAME]);
     $dbskip = $_ENV['DBSKIP'] ?? '';
 

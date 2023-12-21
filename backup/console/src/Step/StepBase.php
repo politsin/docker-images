@@ -9,6 +9,9 @@ use App\Command\CommandInterface;
  */
 class StepBase {
 
+  //phpcs:ignore
+  protected CommandInterface $command;
+
   /**
    * Construct.
    */

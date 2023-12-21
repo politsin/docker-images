@@ -4,8 +4,6 @@ namespace App\Command;
 
 use Bluerhinos\phpMQTT;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
@@ -68,11 +66,6 @@ class CommandBase extends Command {
 
   /**
    * Run Command.
-   *
-   * @param string $cmd
-   *   Command for exec.
-   * @param int $timeout
-   *   Timeout.
    */
   public function runProcess(string $cmd, int $timeout = 60000) {
     $process = Process::fromShellCommandline($cmd, NULL, $_ENV);
@@ -156,10 +149,7 @@ class CommandBase extends Command {
       $response = $client->get("/bot{$_ENV['TELEGA_TOKEN']}/sendMessage?$query");
       $result = $response->getBody()->getContents();
     }
-    catch (ClientException $e) {
-      $result = $e->getMessage();
-    }
-    catch (ConnectException $e) {
+    catch (\Throwable $e) {
       $result = $e->getMessage();
     }
     return $result;
@@ -172,17 +162,20 @@ class CommandBase extends Command {
     $webhook = "{$_ENV['MATTERMOST_HOST']}/{$_ENV['MATTERMOST_HOOK']}";
     $payload['text'] = str_replace("%", "%25", $payload['text']);
     $payload['text'] = str_replace("&", "%26", $payload['text']);
+    if (!empty($_ENV['MATTERMOST_HOST'])) {
+      $webhook = "{$_ENV['MATTERMOST_HOST']}/{$_ENV['MATTERMOST_HOOK']}";
+    }
+    if (!empty($_ENV['WEBHOOK'])) {
+      $webhook = "{$_ENV['WEBHOOK']}";
+    }
     $client = new Client(['timeout' => 1]);
     try {
       $response = $client->post($webhook, [
         'json' => $payload,
       ]);
-      $result = $response->getBody()->getContents();
+      $result = $response->getStatusCode();
     }
-    catch (ClientException $e) {
-      $result = $e->getMessage();
-    }
-    catch (ConnectException $e) {
+    catch (\Throwable $e) {
       $result = $e->getMessage();
     }
     return $result;
