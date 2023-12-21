@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VERSION="8.1"
-BUILD="11"
+BUILD="12"
 
 if build . -t synstd/s3-dockup ; then
   docker tag synstd/s3-dockup synstd/s3-dockup:$VERSION
