@@ -1,9 +1,3 @@
-<?php
-
-/**
- * @file
- */
-?>
 #!/usr/bin/env php
 <?php
 
