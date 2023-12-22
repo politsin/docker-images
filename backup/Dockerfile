@@ -16,4 +16,6 @@ RUN mkdir -p /opt/opcache && \
   sudo -u www-data chmod 755 /opt/console/console.php && \
   rm -rf ~/.composer
 
+RUN /opt/console/console.php echo
+
 ENTRYPOINT ["/usr/bin/php", "/opt/console/console.php"]
