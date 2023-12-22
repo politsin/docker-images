@@ -9,7 +9,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * S3 Restore.
  */
-class Echo extends CommandBase implements CommandInterface {
+class EchoCommand extends CommandBase implements CommandInterface {
 
   /**
    * Config.
