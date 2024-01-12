@@ -89,8 +89,8 @@ RUN chmod 755 /start.sh && \
     mkdir /run/sshd && \
     mkdir /run/php && \
     chmod -R 0755 /run/php && \
-    chown -R www-data.www-data /run/php && \
-    chown www-data.www-data /var/spool/cron/crontabs/www-data && \
+    chown -R www-data:www-data /run/php && \
+    chown www-data:www-data /var/spool/cron/crontabs/www-data && \
     chmod 0777 /var/spool/cron/crontabs && \
     chmod 0600 /var/spool/cron/crontabs/www-data && \
     usermod -d /var/www/ www-data && \
