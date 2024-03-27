@@ -16,7 +16,7 @@ class CreateDbDumpDrushStep extends StepBase {
   public function run() : bool | NULL {
     $drush = '/var/www/html/vendor/bin/drush';
     if (is_file($drush) && is_executable($drush)) {
-      $ver = shell_exec('drush --version | grep Drush | awk \'{print $4}\'');
+      $ver = shell_exec("$drush --version | grep Drush | awk '{print $4}'");
       $version = intval(strstr($ver, ".", TRUE));
       print "Drush version: $ver";
     }
