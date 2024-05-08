@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ARG MMOST="9.2.2"
+ARG MMOST="9.7.3"
 
 # WGET! APT install:::
 RUN apt update -y && \
