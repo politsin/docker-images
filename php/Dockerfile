@@ -1,10 +1,10 @@
-ARG PHP="8.1"
+ARG PHP="8.3"
 
 FROM synstd/php-service:${PHP}
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
 # TODO: ARG NODE="20"
-ARG PHP="8.1"
+ARG PHP="8.3"
 ARG NODE="20"
 
 # Surpress Upstart errors/warning
@@ -86,8 +86,8 @@ COPY config/start.sh /start.sh
 
 # Fix ownership
 RUN chmod 755 /start.sh && \
-    mkdir /run/sshd && \
-    mkdir /run/php && \
+    mkdir -p /run/sshd && \
+    mkdir -p /run/php && \
     chmod -R 0755 /run/php && \
     chown -R www-data:www-data /run/php && \
     chown www-data:www-data /var/spool/cron/crontabs/www-data && \

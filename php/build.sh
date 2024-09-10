@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION="8.1"
-BUILD="251"
+VERSION="8.3"
+BUILD="1"
 
 if docker build . -t synstd/php ; then
   docker tag synstd/php synstd/php:$VERSION
