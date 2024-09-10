@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="8.1"
+VERSION="8.3"
 BUILD="1"
 
 #docker push synstd/php-service

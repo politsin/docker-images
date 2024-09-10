@@ -1,7 +1,7 @@
 FROM ubuntu:24.04
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
-ARG PHP="8.1"
+ARG PHP="8.3"
 ARG DIO="0.3.0"
 
 # Surpress Upstart errors/warning
