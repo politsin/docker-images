@@ -1,8 +1,8 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
 ARG PHP="8.1"
-ARG DIO="0.2.1"
+ARG DIO="0.3.0"
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -38,8 +38,7 @@ RUN apt update -y && \
     apt install -y sqlite3 \
                    redis-tools \
                    mysql-client && \
-    apt install -y awscli \
-                   python-is-python3 \
+    apt install -y python-is-python3 \
                    python3-pip && \
     apt autoremove -y && \
     apt clean && \
@@ -48,11 +47,19 @@ RUN apt update -y && \
     rm -rf /usr/share/man/?? && \
     rm -rf /usr/share/man/??_*
 
+# Aws - cli
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm awscliv2.zip && \
+    rm -r ./aws && \
+    aws --version
+
 # APT postgresql-15:::
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list && \
     apt update && \
-    apt install -y postgresql-client-15 && \
+    apt install -y postgresql-client-16 && \
     apt autoremove -y && \
     apt clean && \
     apt autoclean

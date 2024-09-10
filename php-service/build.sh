@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VERSION="8.1"
-BUILD="0"
+BUILD="1"
 
 #docker push synstd/php-service
 if docker build . -t synstd/php-service ; then
