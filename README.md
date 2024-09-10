@@ -11,7 +11,7 @@ https://hub.docker.com/repositories/synstd
 
 - Чтобы это само заливалось, нужно наличие файла.
   - `/root/.docker/config.json`
-- Вроде этот файл сам как-то появляется командой `docker login`
+- Вроде этот файл сам появляется командой `docker login --username=synstd`
 
 ```json
 {

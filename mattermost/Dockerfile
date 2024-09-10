@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
-ARG MMOST="9.8.0"
+ARG MMOST="9.11.1"
 
 # WGET! APT install:::
 RUN apt update -y && \
