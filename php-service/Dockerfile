@@ -88,7 +88,6 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
                    php${PHP}-gmp \
                    php${PHP}-fpm \
                    php${PHP}-apcu \
-                   php${PHP}-imap \
                    php${PHP}-intl \
                    php${PHP}-ldap \
                    php${PHP}-soap \
