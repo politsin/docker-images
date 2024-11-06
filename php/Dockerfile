@@ -5,7 +5,7 @@ MAINTAINER Synapse <mail@synapse-studio.ru>
 
 # TODO: ARG NODE="20"
 ARG PHP="8.3"
-ARG NODE="20"
+ARG NODE="22"
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -45,7 +45,7 @@ RUN mkdir /var/lib/composer && \
 RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     chmod 500 nsolid_setup_deb.sh && \
     ./nsolid_setup_deb.sh ${NODE} && \
-    apt-get install nodejs -y && \
+    apt install nodejs -y && \
     node -v && npm -v && \
     npm install -g npm && \
     npm -v
@@ -104,5 +104,6 @@ RUN sed -i 's/usr\/local\/games/var\/www\/html\/vendor\/bin/g' /etc/environment
 
 # Expose Ports
 EXPOSE 22
+EXPOSE 3000
 
 ENTRYPOINT ["/start.sh"]
