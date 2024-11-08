@@ -47,25 +47,25 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     ./nsolid_setup_deb.sh ${NODE} && \
     apt install nodejs -y && \
     node -v && npm -v && \
-    npm install -g npm && \
-    npm -v
+    npm install -g pnpm && \
+    pnpm -v
 
 # Init:::
-RUN npm i -g pnpm && \
-    npm i -g gulp-cli && \
-    npm i -g webpack-cli
+RUN pnpm i -g pnpm && \
+    pnpm i -g gulp-cli && \
+    pnpm i -g webpack-cli
 
 # GulpPacs:::
 RUN cd /var && \
-    npm init --yes && \
-    npm i gulp && \
-    npm i node-sass && \
-    npm i gulp-watch && \
-    npm i gulp-plumber && \
-    npm i gulp-touch-cmd && \
-    npm i gulp-sourcemaps && \
-    npm i gulp-sass@npm:@selfisekai/gulp-sass && \
-    npm i webpack webpack-dev-server
+    pnpm init --yes && \
+    pnpm i gulp && \
+    pnpm i node-sass && \
+    pnpm i gulp-watch && \
+    pnpm i gulp-plumber && \
+    pnpm i gulp-touch-cmd && \
+    pnpm i gulp-sourcemaps && \
+    pnpm i gulp-sass@npm:@selfisekai/gulp-sass && \
+    pnpm i webpack webpack-dev-server
 
 # COPY PHP-VER-config:::
 COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
