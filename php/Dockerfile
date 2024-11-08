@@ -62,8 +62,7 @@ RUN cd /var && \
     pnpm i gulp-plumber && \
     pnpm i gulp-touch-cmd && \
     pnpm i gulp-sourcemaps && \
-    pnpm i gulp-sass@npm:@selfisekai/gulp-sass && \
-    pnpm i webpack webpack-dev-server
+    pnpm i gulp-sass@npm:@selfisekai/gulp-sass
 
 # COPY PHP-VER-config:::
 COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
