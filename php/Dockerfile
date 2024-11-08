@@ -3,9 +3,9 @@ ARG PHP="8.3"
 FROM synstd/php-service:${PHP}
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
-# TODO: ARG NODE="20"
 ARG PHP="8.3"
 ARG NODE="23"
+ENV PNPM_HOME=/usr/local/bin
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
