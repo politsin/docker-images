@@ -51,8 +51,7 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     pnpm -v
 
 # Init:::
-RUN pnpm i -g pnpm && \
-    pnpm i -g gulp-cli && \
+RUN pnpm i -g gulp-cli && \
     pnpm i -g webpack-cli
 
 # GulpPacs:::
