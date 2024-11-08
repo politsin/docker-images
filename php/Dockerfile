@@ -5,7 +5,7 @@ MAINTAINER Synapse <mail@synapse-studio.ru>
 
 # TODO: ARG NODE="20"
 ARG PHP="8.3"
-ARG NODE="22"
+ARG NODE="23"
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -51,7 +51,7 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     npm -v
 
 # Init:::
-RUN npm i -g yarn && \
+RUN npm i -g pnpm && \
     npm i -g gulp-cli && \
     npm i -g webpack-cli
 
