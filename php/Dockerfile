@@ -55,7 +55,7 @@ RUN npm i -g pnpm && \
 
 # GulpPacs:::
 RUN cd /var && \
-    pnpm init --yes && \
+    pnpm init && \
     pnpm i gulp && \
     pnpm i node-sass && \
     pnpm i gulp-watch && \
