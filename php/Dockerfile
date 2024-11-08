@@ -48,6 +48,7 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     apt install nodejs -y && \
     node -v && npm -v && \
     npm install -g pnpm && \
+    pnpm setup && \
     pnpm -v
 
 # Init:::
