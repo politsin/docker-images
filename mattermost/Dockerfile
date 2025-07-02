@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-ARG MMOST="9.11.1"
+ARG MMOST="10.9.2"
 
 # WGET! APT install:::
 RUN apt update -y && \
