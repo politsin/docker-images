@@ -10,4 +10,3 @@ docker build --network=host -t synstd/mattermost . || {
 docker tag synstd/mattermost synstd/mattermost:10.11.2
 docker push synstd/mattermost
 docker push synstd/mattermost:10.11.2
- 
