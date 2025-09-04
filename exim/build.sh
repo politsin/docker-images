@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 docker build -t synstd/exim .
 docker tag synstd/exim synstd/exim:4.98.2
 # docker login --username=synstd

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 VERSION="8.1"
 BUILD="13"
 
