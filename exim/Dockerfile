@@ -19,4 +19,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
 
 ENTRYPOINT ["exim"]
 
-CMD ["-bd", "-q30m", "-oP", "/run/exim/exim.pid"]
+CMD ["-bdf", "-q30m", "-oP", "/run/exim/exim.pid"]
+
