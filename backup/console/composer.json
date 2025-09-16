@@ -1,11 +1,11 @@
 {
   "require": {
-    "cweagans/composer-patches": "^1.7",
+    "cweagans/composer-patches": "^1",
     "bluerhinos/phpmqtt": "@dev",
-    "guzzlehttp/guzzle": "^7.0",
-    "symfony/console": "^5.0",
-    "symfony/process": "^5.0",
-    "symfony/dotenv": "^5.0"
+    "guzzlehttp/guzzle": "^7",
+    "symfony/console": "^7",
+    "symfony/process": "^7",
+    "symfony/dotenv": "^7"
   },
   "extra": {
     "patches": {

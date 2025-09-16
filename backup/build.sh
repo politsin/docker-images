@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="8.1"
+VERSION="8.3"
 BUILD="13"
 
 if docker build . -t synstd/s3-dockup ; then
@@ -12,5 +12,5 @@ if docker build . -t synstd/s3-dockup ; then
   # Push to https://hub.docker.com/r/synstd/s3-dockup
   docker push synstd/s3-dockup:$VERSION.$BUILD
   docker push synstd/s3-dockup:$VERSION
-  docker push synstd/s3-dockup
+  #docker push synstd/s3-dockup
 fi

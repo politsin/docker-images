@@ -1,6 +1,6 @@
-ARG PHP="8.1"
+ARG PHP="8.3"
 FROM synstd/php-service:${PHP}
-ARG PHP="8.1"
+ARG PHP="8.3"
 
 
 MAINTAINER Synapse <mail@synapse-studio.ru>
