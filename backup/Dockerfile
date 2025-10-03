@@ -1,9 +1,15 @@
-ARG PHP="8.3"
+ARG PHP="8.2"
 FROM synstd/php-service:${PHP}
-ARG PHP="8.3"
+ARG PHP="8.2"
 
 
 MAINTAINER Synapse <mail@synapse-studio.ru>
+
+# Установка mydumper и myloader
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  mydumper \
+  && rm -rf /var/lib/apt/lists/*
 
 #COPY script & config:::
 COPY config/opcache.ini /etc/php/${PHP}/mods-available/opcache.ini

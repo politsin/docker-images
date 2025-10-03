@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Step\ArchiveStep;
 use App\Step\CreateDbDumpStep;
-use App\Step\RemoveDumpFileStep;
+use App\Step\RemoveDumpStep;
 use App\Step\SetTimezoneStep;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,11 +45,11 @@ class S3Backup extends CommandBase implements CommandInterface {
     }
     elseif (!(new ArchiveStep($this))->run()) {
       $this->sendMqttMessage('ERROR', 'ArchiveStep');
-      (new RemoveDumpFileStep($this))->run();
+      (new RemoveDumpStep($this))->run();
       return 103;
     }
-    elseif (!(new RemoveDumpFileStep($this))->run()) {
-      $this->sendMqttMessage('ERROR', 'RemoveDumpFileStep');
+    elseif (!(new RemoveDumpStep($this))->run()) {
+      $this->sendMqttMessage('ERROR', 'RemoveDumpStep');
       return 104;
     }
 

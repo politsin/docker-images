@@ -27,12 +27,17 @@ class CreateDbDumpStep extends StepBase {
         $this->command->logExecute(FALSE, 'DRUSH db-dump', $msg);
       }
     }
+
     if ($_ENV['DBDUMP'] == 'mysql') {
       $result = (new CreateDbDumpMysqlStep($this->command))->run();
     }
     elseif ($_ENV['DBDUMP'] == 'postgre') {
       $result = (new CreateDbDumpPostgreStep($this->command))->run();
     }
+    elseif ($_ENV['DBDUMP'] == 'mydumper') {
+      $result = (new CreateDbDumpMydumperStep($this->command))->run();
+    }
+
     if ($result && (new CreateDbDumpChownStep($this->command))->run()) {
       $this->command->sendMqttMessage('FINISH', 'CreateDbDumpStep');
       return TRUE;

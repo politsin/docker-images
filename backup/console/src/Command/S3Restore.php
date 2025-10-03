@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Step\DownloadBackupStep;
-use App\Step\RemoveDumpFileStep;
+use App\Step\RemoveDumpStep;
 use App\Step\RestoreDbDumpStep;
 use App\Step\WriteSettingsStep;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,8 +49,8 @@ class S3Restore extends CommandBase implements CommandInterface {
       $this->sendMqttMessage('ERROR', 'RestoreDbDumpStep');
       return 203;
     }
-    elseif (!(new RemoveDumpFileStep($this))->run()) {
-      $this->sendMqttMessage('ERROR', 'RemoveDumpFileStep');
+    elseif (!(new RemoveDumpStep($this))->run()) {
+      $this->sendMqttMessage('ERROR', 'RemoveDumpStep');
       return 204;
     }
 

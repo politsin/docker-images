@@ -30,6 +30,9 @@ class RestoreDbDumpStep extends StepBase {
     elseif ($_ENV['DBDUMP'] == 'postgre') {
       $result = (new RestoreDbDumpPostgreStep($this->command))->run();
     }
+    elseif ($_ENV['DBDUMP'] == 'mydumper') {
+      $result = (new RestoreDbDumpMyloaderStep($this->command))->run();
+    }
 
     if ($result) {
       $this->command->sendMqttMessage('FINISH', 'RestoreDbDumpStep');
