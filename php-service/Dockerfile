@@ -3,6 +3,7 @@ MAINTAINER Synapse <mail@synapse-studio.ru>
 
 ARG PHP="8.3"
 ARG DIO="0.3.0"
+ARG TARGETARCH
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -48,12 +49,17 @@ RUN apt update -y && \
     rm -rf /usr/share/man/??_*
 
 # Aws - cli
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
+RUN set -eux; \
+    case "$TARGETARCH" in \
+      amd64) aws_arch="x86_64" ;; \
+      arm64) aws_arch="aarch64" ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+    esac; \
+    curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-${aws_arch}.zip" -o awscliv2.zip && \
+    unzip -q awscliv2.zip && \
     ./aws/install && \
-    rm awscliv2.zip && \
-    rm -r ./aws && \
-    aws --version
+    rm -rf awscliv2.zip aws && \
+    /usr/local/bin/aws --version
 
 # APT postgresql-15:::
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
@@ -107,9 +113,9 @@ RUN LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
 # Disable php-xdebug:::
 RUN echo '' > /etc/php/${PHP}/mods-available/xdebug.ini
 
-# Redis:::
-RUN pecl channel-update pecl.php.net
-RUN pecl install -f -o redis
+# Redis::: php${PHP}-redis \
+# RUN pecl channel-update pecl.php.net
+# RUN pecl install -f -o redis
 
 # gRPC:::
 RUN pecl install grpc && \

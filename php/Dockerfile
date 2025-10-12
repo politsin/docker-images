@@ -1,9 +1,9 @@
-ARG PHP="8.3"
+ARG PHP="8.4"
 
 FROM synstd/php-service:${PHP}
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
-ARG PHP="8.3"
+ARG PHP="8.4"
 ARG NODE="23"
 ENV PNPM_HOME=/usr/local/bin
 

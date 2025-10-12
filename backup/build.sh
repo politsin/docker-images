@@ -3,7 +3,7 @@
 set -e
 
 VERSION="8.2"
-BUILD="4"
+BUILD="5"
 
 if docker build . -t synstd/s3-dockup ; then
   docker tag synstd/s3-dockup synstd/s3-dockup:$VERSION

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="8.1"
+VERSION="8.3"
 
 docker manifest create synstd/php-service:$VERSION \
 --amend synstd/php-service:$VERSION-amd64 \
