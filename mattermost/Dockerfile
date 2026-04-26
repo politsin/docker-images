@@ -1,41 +1,39 @@
 FROM ubuntu:24.04
 
-ARG MMOST="10.11.2"
+ARG MMOST="11.5.1"
 
-ARG SOCKS_USER=
-ARG SOCKS_PASS=
-ARG SOCKS_HOST=
-ARG SOCKS_PORT=
+RUN --mount=type=secret,id=socks_user \
+    --mount=type=secret,id=socks_pass \
+    --mount=type=secret,id=socks_host \
+    --mount=type=secret,id=socks_port \
+    \
+    SOCKS_USER="$(cat /run/secrets/socks_user)" && \
+    SOCKS_PASS="$(cat /run/secrets/socks_pass)" && \
+    SOCKS_HOST="$(cat /run/secrets/socks_host)" && \
+    SOCKS_PORT="$(cat /run/secrets/socks_port)" && \
+    \
+    # Собираем строку прокси
+    PROXY_URL="socks5h://${SOCKS_USER}:${SOCKS_PASS}@${SOCKS_HOST}:${SOCKS_PORT}" && \
+    \
+    # Установка зависимостей
+    apt-get update && \
+    apt-get install -y --no-install-recommends curl ca-certificates tar && \
+    \
+    # Скачивание через прокси
+    curl -fSL -x "$PROXY_URL" \
+        "https://releases.mattermost.com/${MMOST}/mattermost-${MMOST}-linux-amd64.tar.gz" \
+        -o /tmp/mattermost.tar.gz && \
+    \
+    # Распаковка
+    mkdir -p /opt/mattermost && \
+    tar -xzf /tmp/mattermost.tar.gz -C /opt/mattermost --strip-components=1 && \
+    \
+    # Очистка
+    rm -f /tmp/mattermost.tar.gz && \
+    apt-get purge -y curl && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
-# WGET! APT install:::
-RUN apt update -y && \
-    apt install -y wget \
-	               curl \
-                   dnsutils \
-                   net-tools \
-                   inetutils-ping && \
-    apt autoremove -y && \
-    apt clean && \
-    apt autoclean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /usr/share/man/?? && \
-    rm -rf /usr/share/man/??_*
-
-#Install:::
-RUN set -eux; \
-    URL="https://releases.mattermost.com/${MMOST}/mattermost-${MMOST}-linux-amd64.tar.gz"; \
-    curl -fL \
-      --socks5-hostname ${SOCKS_USER}:${SOCKS_PASS}@${SOCKS_HOST}:${SOCKS_PORT} \
-      -o /tmp/mattermost.tar.gz "$URL"; \
-    tar -xzf /tmp/mattermost.tar.gz -C /opt; \
-    rm /tmp/mattermost.tar.gz; \
-    mkdir -p /opt/mattermost/data; \
-    chmod +x /opt/mattermost/bin/mattermost
-
-# Проверить версию во время билда (даст понятный лог и оборвёт билд при проблеме)
-RUN /opt/mattermost/bin/mattermost version || (echo "Mattermost not installed" >&2; exit 1)
-
-# Expose Ports
+WORKDIR /opt/mattermost
 EXPOSE 8065
-
-ENTRYPOINT ["/opt/mattermost/bin/mattermost"]
+CMD ["./bin/mattermost"]
