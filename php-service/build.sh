@@ -1,18 +1,17 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-VERSION="8.3"
-BUILD="1"
+IMAGE="synstd/php-service"
+VERSION="${VERSION:-8.3}"
+BUILD="${BUILD:-1}"
 
-#docker push synstd/php-service
-if docker build . -t synstd/php-service ; then
-  docker tag synstd/php-service synstd/php-service:$VERSION
-  docker tag synstd/php-service synstd/php-service:$VERSION-amd64
-  docker tag synstd/php-service synstd/php-service:$VERSION.$BUILD
+if docker build --build-arg PHP="$VERSION" . -t "${IMAGE}" ; then
+  docker tag "${IMAGE}" "${IMAGE}:${VERSION}"
+  docker tag "${IMAGE}" "${IMAGE}:${VERSION}-amd64"
+  docker tag "${IMAGE}" "${IMAGE}:${VERSION}.${BUILD}"
 
-  # Push to https://hub.docker.com/r/synstd/php-service
-  docker push synstd/php-service:$VERSION-amd64
-  docker push synstd/php-service:$VERSION.$BUILD
-  docker push synstd/php-service:$VERSION
+  docker push "${IMAGE}:${VERSION}-amd64"
+  docker push "${IMAGE}:${VERSION}.${BUILD}"
+  docker push "${IMAGE}:${VERSION}"
 fi

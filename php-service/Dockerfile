@@ -3,7 +3,8 @@ MAINTAINER Synapse <mail@synapse-studio.ru>
 
 ARG PHP="8.3"
 ARG DIO="0.3.0"
-ARG TARGETARCH
+ARG TARGETARCH="amd64"
+ARG WKHTMLTOX_VERSION="0.12.6.1-3"
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -35,7 +36,12 @@ RUN apt update -y && \
                    ssmtp \
                    ffmpeg \
                    sshpass \
-                   imagemagick &&  \
+                   imagemagick \
+                   fontconfig \
+                   libxrender1 \
+                   libxext6 \
+                   xfonts-75dpi \
+                   xfonts-base &&  \
     apt install -y sqlite3 \
                    redis-tools \
                    mysql-client && \
@@ -47,6 +53,21 @@ RUN apt update -y && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /usr/share/man/?? && \
     rm -rf /usr/share/man/??_*
+
+# wkhtmltopdf with patched Qt is installed from the upstream packaging release.
+RUN set -eux; \
+    case "$TARGETARCH" in \
+      amd64|arm64) wkhtmltox_arch="${TARGETARCH}" ;; \
+      *) echo "Unsupported TARGETARCH for wkhtmltox: $TARGETARCH" >&2; exit 1 ;; \
+    esac; \
+    wget -O /tmp/wkhtmltox.deb "https://github.com/wkhtmltopdf/packaging/releases/download/${WKHTMLTOX_VERSION}/wkhtmltox_${WKHTMLTOX_VERSION}.jammy_${wkhtmltox_arch}.deb" && \
+    apt update -y && \
+    apt install -y /tmp/wkhtmltox.deb && \
+    rm -f /tmp/wkhtmltox.deb && \
+    wkhtmltopdf --version && \
+    apt clean && \
+    apt autoclean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Aws - cli
 RUN set -eux; \
@@ -126,7 +147,8 @@ RUN pecl install grpc && \
 # Uploadprogress:::
 RUN pecl install uploadprogress && \
     echo 'extension=uploadprogress.so' > /etc/php/${PHP}/mods-available/uploadprogress.ini && \
-    ln -s /etc/php/{PHP}/mods-available/uploadprogress.ini /etc/php/${PHP}/fpm/conf.d/20-uploadprogress.ini
+    ln -s /etc/php/${PHP}/mods-available/uploadprogress.ini /etc/php/${PHP}/fpm/conf.d/20-uploadprogress.ini && \
+    ln -s /etc/php/${PHP}/mods-available/uploadprogress.ini /etc/php/${PHP}/cli/conf.d/20-uploadprogress.ini
 
 # DIO `pecl install dio` # OR
 RUN pecl install channel://pecl.php.net/dio-${DIO} && \

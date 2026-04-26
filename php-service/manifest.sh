@@ -1,6 +1,8 @@
 #!/bin/bash
 
-VERSION="8.3"
+set -euo pipefail
+
+VERSION="${VERSION:-8.3}"
 
 docker manifest create synstd/php-service:$VERSION \
 --amend synstd/php-service:$VERSION-amd64 \
