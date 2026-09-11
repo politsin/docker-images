@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+
+ssh_log=/var/log/ssh.log
+temporary_log=$(mktemp /var/log/.ssh.log.XXXXXX)
+
+cleanup() {
+    rm -f "${temporary_log}"
+}
+trap cleanup EXIT HUP INT TERM
+
+grep -F 'Accepted publickey' "${ssh_log}" > "${temporary_log}" || {
+    status=$?
+    [ "${status}" -eq 1 ] || exit "${status}"
+}
+
+# Keep sshd/Supervisor's open file descriptor: overwrite, do not replace inode.
+cat "${temporary_log}" > "${ssh_log}"
+chown root:www-data "${ssh_log}"
+chmod 0640 "${ssh_log}"

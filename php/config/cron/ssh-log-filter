@@ -1,0 +1,3 @@
+# Once per hour at a random offset; runs as root.
+# The randomized delay is bounded below one hour, so executions never overlap.
+0 * * * * root sleep "$(shuf -i 0-3599 -n 1)"; /usr/local/sbin/filter-ssh-log
