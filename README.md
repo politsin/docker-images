@@ -13,6 +13,19 @@ https://hub.docker.com/repositories/synstd
   - `/root/.docker/config.json`
 - Вроде этот файл сам появляется командой `docker login --username=synstd`
 
+## PHP CodeSniffer
+
+В образах `synstd/php` PHP CodeSniffer по умолчанию использует
+`/var/lib/composer/phpcs.xml`. Из набора `Drupal.Commenting` отключены правила
+оформления PHPDoc и описаний типов/свойств/параметров: они не должны
+переписывать комментарии PHPStan. Оставлены включёнными:
+
+- `Drupal.Commenting.Deprecated`;
+- `Drupal.Commenting.PostStatementComment`;
+- `Drupal.Commenting.TodoComment`.
+
+Остальные правила Drupal и PHP CodeSniffer продолжают работать как обычно.
+
 ```json
 {
   "auths": {

@@ -31,14 +31,15 @@ RUN apt update -y && \
     rm -rf /usr/share/man/??_*
 
 # PhpCS:::
-RUN mkdir /var/lib/composer && \
+COPY config/phpcs/no-drupal-commenting.xml /var/lib/composer/phpcs.xml
+RUN mkdir -p /var/lib/composer && \
     cd /var/lib/composer && \
     wget https://raw.githubusercontent.com/politsin/snipets/master/patch/composer.json && \
     COMPOSER_IPRESOLVE=4 COMPOSER_MAX_PARALLEL_HTTP=1 composer install --no-progress -o && \
     sed -i 's/snap/var\/lib\/composer\/vendor/g' /etc/environment && \
     /var/lib/composer/vendor/bin/phpcs -i && \
     /var/lib/composer/vendor/bin/phpcs --config-set colors 1 && \
-    /var/lib/composer/vendor/bin/phpcs --config-set default_standard Drupal && \
+    /var/lib/composer/vendor/bin/phpcs --config-set default_standard /var/lib/composer/phpcs.xml && \
     /var/lib/composer/vendor/bin/phpcs --config-show
 
 # NodeJS:::
