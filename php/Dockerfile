@@ -5,7 +5,11 @@ MAINTAINER Synapse <mail@synapse-studio.ru>
 
 ARG PHP="8.4"
 ARG NODE="26"
-ENV PNPM_HOME=/usr/local/bin
+# Keep the common Gulp toolchain available to mounted projects that do not
+# persist node_modules between container recreations. Local project modules,
+# when present, still take precedence over this fallback path.
+ENV PNPM_HOME=/usr/local/bin \
+    NODE_PATH=/var/node_modules
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -59,11 +63,12 @@ RUN npm config set fetch-retries 5 && \
     pnpm config set dangerouslyAllowAllBuilds true && \
     npm i -g gulp-cli
 
-# GulpPacs:::
+# GulpPacs::: node-sass is an alias to Dart Sass for legacy gulpfiles.
 RUN cd /var && \
     pnpm init && \
     pnpm i gulp && \
     pnpm i sass && \
+    pnpm i node-sass@npm:sass && \
     pnpm i gulp-watch && \
     pnpm i gulp-plumber && \
     pnpm i gulp-touch-cmd && \
