@@ -1,5 +1,6 @@
 ARG PHP="8.2"
-FROM synstd/php-service:${PHP}
+ARG BASE_IMAGE="synstd/php-service"
+FROM ${BASE_IMAGE}:${PHP}
 ARG PHP="8.2"
 
 
