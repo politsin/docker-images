@@ -76,5 +76,11 @@ build_php_image() {
     ' 2>&1 | tee "$LOG_DIR/php-$branch-smoke.txt"
   fi
   publish_php "$image" "$branch" "$candidate"
+  local runtime debian digest
+  runtime=$(docker run --rm --entrypoint php "$candidate" -r 'echo PHP_VERSION;')
+  debian=$(docker run --rm --entrypoint dpkg-query "$candidate" -W '-f=${Version}' "php${branch}-cli")
+  digest=$(docker image inspect "$candidate" --format '{{range .RepoDigests}}{{println .}}{{end}}' | awk -v prefix="$image@" 'index($0,prefix)==1 {print; exit}')
+  test -n "$digest"
+  printf '%s\t%s\t%s\t%s\t%s\n' "$branch" "$kind" "$runtime" "$debian" "$digest" >> "$LOG_DIR/published-php.tsv"
   docker image inspect "$candidate" --format '{{.Id}}' > "$marker"
 }
