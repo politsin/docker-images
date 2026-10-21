@@ -1,0 +1,22 @@
+{
+  "name": "synstd-php-frontend-tools",
+  "private": true,
+  "dependencies": {
+    "gulp": "^5.0.1",
+    "sass": "^1.0.0",
+    "node-sass": "npm:sass@^1.0.0",
+    "gulp-watch": "^5.0.1",
+    "gulp-plumber": "^1.2.1",
+    "gulp-touch-cmd": "^0.0.1",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-sass": "npm:@selfisekai/gulp-sass@*",
+    "eslint": "^10.0.0",
+    "@eslint/js": "^10.0.0",
+    "globals": "^17.0.0",
+    "stylelint": "^17.0.0",
+    "stylelint-config-recommended": "^18.0.0",
+    "stylelint-order": "^8.0.0",
+    "stylelint-config-recommended-scss": "^17.0.1",
+    "editorconfig-checker": "^7.0.0"
+  }
+}

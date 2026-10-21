@@ -1,7 +1,8 @@
-FROM ubuntu:26.04
+ARG UBUNTU_IMAGE=ubuntu:26.04
+FROM ${UBUNTU_IMAGE} AS common
 MAINTAINER Synapse <mail@synapse-studio.ru>
 
-ARG PHP="8.4"
+ARG REFRESH="manual"
 ARG DIO="0.3.0"
 ARG TARGETARCH="amd64"
 ARG WKHTMLTOX_VERSION="0.12.6.1-3"
@@ -127,7 +128,11 @@ RUN apt update && \
     apt clean && \
     apt autoclean
 
-#  PHP:::
+# Keep this stage independent of PHP so the OS/tools are built only once.
+FROM common AS runtime
+
+ARG PHP="8.4"
+ARG PHP_PACKAGE_VERSION="latest"
 # Ondrej PPA does not publish Ubuntu 26.04 packages yet. Keep the OS base on
 # 26.04 and use noble only for the PHP repo plus missing PHP ABI dependencies.
 RUN find /etc/apt -type f \( -name '*.sources' -o -name '*.list' \) -exec sed -i -e 's|http://archive.ubuntu.com/ubuntu|http://mirror.yandex.ru/ubuntu|g' -e 's|http://security.ubuntu.com/ubuntu|http://mirror.yandex.ru/ubuntu|g' {} + && \
@@ -180,7 +185,15 @@ RUN find /etc/apt -type f \( -name '*.sources' -o -name '*.list' \) -exec sed -i
     rm -rf /usr/share/man/??_*
 
 # Disable php-xdebug:::
-RUN echo '' > /etc/php/${PHP}/mods-available/xdebug.ini
+RUN update-alternatives --set php /usr/bin/php${PHP} && \
+    update-alternatives --set phpize /usr/bin/phpize${PHP} && \
+    update-alternatives --set php-config /usr/bin/php-config${PHP} && \
+    echo '' > /etc/php/${PHP}/mods-available/xdebug.ini
+
+# Reject unpatched packages before spending time compiling extensions.
+COPY verify-security.sh /usr/local/bin/verify-php-security
+RUN chmod 0755 /usr/local/bin/verify-php-security && \
+    /usr/local/bin/verify-php-security ${PHP}
 
 # Redis::: php${PHP}-redis \
 # RUN pecl channel-update pecl.php.net
@@ -206,13 +219,13 @@ RUN set -eux; \
         ln -sf /etc/php/${PHP}/mods-available/grpc.ini /etc/php/${PHP}/cli/conf.d/20-grpc.ini; \
         ln -sf /etc/php/${PHP}/mods-available/grpc.ini /etc/php/${PHP}/fpm/conf.d/20-grpc.ini; \
         ;; \
-      *) \
+      8.3|8.4) \
         apt update; \
         apt install -y php${PHP}-grpc; \
         ;; \
+      *) echo "Skip grpc for PHP ${PHP}" ;; \
     esac; \
-    php -m | grep -i '^grpc$'; \
-    php --ri grpc >/dev/null; \
+    case "${PHP}" in 8.3|8.4|8.5) php --ri grpc >/dev/null ;; esac; \
     apt clean; \
     apt autoclean; \
     rm -rf /var/lib/apt/lists/*
@@ -240,7 +253,7 @@ RUN apt update && \
 # DIO `pecl install dio` # OR
 RUN set -eux; \
     case "${PHP}" in \
-      7.2|7.4) echo "Skip dio for PHP ${PHP}; previous images did not include it and current dio requires PHP >= 8.0" ;; \
+      7.*|8.0|8.1|8.2) echo "Skip dio for PHP ${PHP}; enabled only for PHP >= 8.3" ;; \
       *) \
         apt update; \
         apt install -y build-essential pkg-config zlib1g-dev; \
@@ -273,7 +286,8 @@ RUN set -eux; \
 
 # Composer:::
 RUN wget https://getcomposer.org/installer -q -O composer-setup.php && \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    case "${PHP}" in 7.1) composer_channel=--2.2 ;; *) composer_channel=--2 ;; esac && \
+    php composer-setup.php ${composer_channel} --install-dir=/usr/local/bin --filename=composer && \
     chmod +x /usr/local/bin/composer
 
 
@@ -281,7 +295,7 @@ RUN wget https://getcomposer.org/installer -q -O composer-setup.php && \
 RUN php --ini
 COPY service /opt/app/php/service
 RUN case "${PHP}" in \
-      7.2|7.4|8.0) echo "Skip service composer install for PHP ${PHP}; service composer.json requires PHP ^8.1 and run.php has no vendor dependency" ;; \
+      7.*|8.0) echo "Skip service composer install for PHP ${PHP}; service composer.json requires PHP ^8.1 and run.php has no vendor dependency" ;; \
       *) composer install -d /opt/app/php/service ;; \
     esac
 RUN ls /opt/app/php/service

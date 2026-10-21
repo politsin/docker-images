@@ -9,7 +9,8 @@ ARG NODE="26"
 # persist node_modules between container recreations. Local project modules,
 # when present, still take precedence over this fallback path.
 ENV PNPM_HOME=/usr/local/bin \
-    NODE_PATH=/var/node_modules
+    NODE_PATH=/var/node_modules \
+    PATH=/var/node_modules/.bin:${PATH}
 
 # Surpress Upstart errors/warning
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -36,9 +37,13 @@ RUN apt update -y && \
 
 # PhpCS:::
 COPY config/phpcs/no-drupal-commenting.xml /var/lib/composer/phpcs.xml
+COPY config/phpcs/composer-legacy.json /var/lib/composer/composer-legacy.json
 RUN mkdir -p /var/lib/composer && \
     cd /var/lib/composer && \
-    wget https://raw.githubusercontent.com/politsin/snipets/master/patch/composer.json && \
+    case "${PHP}" in \
+      7.1) cp composer-legacy.json composer.json ;; \
+      *) wget https://raw.githubusercontent.com/politsin/snipets/master/patch/composer.json ;; \
+    esac && \
     COMPOSER_IPRESOLVE=4 COMPOSER_MAX_PARALLEL_HTTP=1 composer install --no-progress -o && \
     sed -i 's/snap/var\/lib\/composer\/vendor/g' /etc/environment && \
     /var/lib/composer/vendor/bin/phpcs -i && \
@@ -59,23 +64,14 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
 RUN npm config set fetch-retries 5 && \
     npm config set fetch-retry-mintimeout 20000 && \
     npm config set fetch-retry-maxtimeout 120000 && \
-    npm i -g pnpm && \
-    pnpm config set dangerouslyAllowAllBuilds true && \
     npm i -g gulp-cli
 
 # GulpPacs::: node-sass is an alias to Dart Sass for legacy gulpfiles.
-RUN cd /var && \
-    pnpm init && \
-    pnpm i gulp && \
-    pnpm i sass && \
-    pnpm i node-sass@npm:sass && \
-    pnpm i gulp-watch && \
-    pnpm i gulp-plumber && \
-    pnpm i gulp-touch-cmd && \
-    pnpm i gulp-sourcemaps && \
-    pnpm i gulp-sass@npm:@selfisekai/gulp-sass && \
-    npm uninstall -g pnpm && \
-    rm -rf /usr/local/bin/store /root/.cache /root/.local/share/pnpm
+COPY config/frontend/package*.json /var/
+COPY config/frontend/frontend-smoke.sh /usr/local/bin/frontend-smoke.sh
+RUN cd /var && npm ci --no-audit --no-fund && \
+    eslint --version && stylelint --version && editorconfig-checker --version && \
+    npm cache clean --force && chmod 0755 /usr/local/bin/frontend-smoke.sh
 
 # COPY PHP-VER-config:::
 COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
