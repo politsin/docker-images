@@ -1,8 +1,8 @@
 #!/bin/sh
 set -eu
 
-ssh_log=/var/log/ssh.log
-temporary_log=$(mktemp /var/log/.ssh.log.XXXXXX)
+ssh_log=/var/log/ssh/ssh.log
+temporary_log=$(mktemp /var/log/ssh/.ssh.log.XXXXXX)
 
 cleanup() {
     rm -f "${temporary_log}"

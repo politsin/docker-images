@@ -102,10 +102,12 @@ RUN chmod 755 /start.sh && \
     chmod 0755 /usr/local/sbin/filter-ssh-log && \
     chmod 0644 /etc/cron.d/ssh-log-filter && \
     mkdir -p /run/sshd && \
-    touch /var/log/ssh.log && \
-    chmod 0640 /var/log/ssh.log && \
+    mkdir -p /var/log/ssh && \
+    touch /var/log/ssh/ssh.log && \
+    chmod 0750 /var/log/ssh && \
+    chmod 0640 /var/log/ssh/ssh.log && \
     mkdir -p /run/php && \
-    chown root:www-data /var/log/ssh.log && \
+    chown root:www-data /var/log/ssh /var/log/ssh/ssh.log && \
     chmod -R 0755 /run/php && \
     chown -R www-data:www-data /run/php && \
     chown www-data:www-data /var/spool/cron/crontabs/www-data && \
@@ -116,7 +118,8 @@ RUN chmod 755 /start.sh && \
 
 # Permit ssh login with password (auth key only)
 RUN sed -i "s/#PasswordAuthentication.*/PasswordAuthentication no/g" /etc/ssh/sshd_config && \
-    printf '\\nLogLevel VERBOSE\\n' >> /etc/ssh/sshd_config
+    printf '\nLogLevel VERBOSE\n' >> /etc/ssh/sshd_config && \
+    /usr/sbin/sshd -t
 
 # Composer bin to environment
 RUN sed -i 's/usr\/local\/games/var\/www\/html\/vendor\/bin/g' /etc/environment
