@@ -13,7 +13,7 @@ case "$branch" in
   8.3) minimum=8.3.36 ;; 8.2) minimum=8.2.35 ;;
 esac
 while true; do
-  if curl "${curl_transport[@]}" -4 --connect-timeout 10 --max-time 45 -fsSL \
+  if curl "${curl_transport[@]}" -4 --connect-timeout 10 --max-time 180 --retry 2 --retry-all-errors -fsSL \
     'http://ppa.launchpadcontent.net/ondrej/php/ubuntu/dists/noble/main/binary-amd64/Packages.gz' -o "$work/Packages.gz"; then
     stanza=$(gzip -dc "$work/Packages.gz" | awk -v p="php$branch-common" 'BEGIN{RS="";FS="\n"} $1=="Package: "p{print}')
     version=$(printf '%s\n' "$stanza" | sed -n 's/^Version: //p')

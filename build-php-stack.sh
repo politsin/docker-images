@@ -16,6 +16,12 @@ for version in "${versions[@]}"; do
   [[ "$version" =~ ^(8\.[0-5]|7\.[1-4])$ ]] || { echo "Invalid version $version" >&2; exit 1; }
 done
 while read -r version; do
+  if [[ -f "$LOG_DIR/php-service-$version.done" && -f "$LOG_DIR/php-$version.done" ]] &&
+     [[ "$(docker image inspect "synstd/php-service:$version" --format '{{.Id}}' 2>/dev/null || true)" == "$(cat "$LOG_DIR/php-service-$version.done")" ]] &&
+     [[ "$(docker image inspect "synstd/php:$version" --format '{{.Id}}' 2>/dev/null || true)" == "$(cat "$LOG_DIR/php-$version.done")" ]]; then
+    echo "Already verified/published PHP pair: $version"
+    continue
+  fi
   export VERSION="$version"
   PHP_PACKAGE_VERSION="$("$ROOT_DIR/wait-php-package.sh" "$version")"
   export PHP_PACKAGE_VERSION
