@@ -18,7 +18,7 @@ COPY console /opt/console
 RUN mkdir -p /opt/opcache && \
   chown www-data:www-data -R /opt/opcache && \
   chown www-data:www-data -R /opt/console && \
-  sudo -u www-data composer install -d /opt/console && \
+  sudo -E -u www-data composer install -d /opt/console && \
   sudo -u www-data ls /opt/console/vendor && \
   sudo -u www-data chmod 755 /opt/console/console.php && \
   rm -rf ~/.composer
