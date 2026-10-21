@@ -2,6 +2,13 @@
 set -euo pipefail
 branch="$1"
 [[ "$branch" =~ ^(8\.[0-5]|7\.[1-4])$ ]] || exit 2
+root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+locked_version=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get(sys.argv[2],{}).get("version",""))' "$root_dir/php-service/security-sources.json" "$branch")
+if [[ -n "$locked_version" ]]; then
+  echo "Using checksum-locked successful noble/amd64 vendor artifacts for PHP $branch" >&2
+  printf '%s\n' "$locked_version"
+  exit 0
+fi
 work=$(mktemp -d /tmp/php-package-preflight.XXXXXX)
 trap 'rm -rf "$work"' EXIT
 deadline=$((SECONDS + ${PACKAGE_WAIT_SECONDS:-3600}))
