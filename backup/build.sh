@@ -3,7 +3,7 @@ set -euo pipefail
 source "$(dirname "$(readlink -f "$0")")/../build-lib.sh"
 VERSION="${VERSION:-8.5}"
 BUILD="${BUILD:?Set the next numeric BUILD for this PHP branch}"
-[[ "$VERSION" =~ ^8\.[135]$ && "$BUILD" =~ ^[0-9]+$ ]] || { echo 'Invalid VERSION or BUILD' >&2; exit 1; }
+[[ "$VERSION" =~ ^8\.[0-5]$ && "$BUILD" =~ ^[0-9]+$ ]] || { echo 'Invalid VERSION or BUILD' >&2; exit 1; }
 base=synstd/php-service
 case "$VERSION" in 8.3|8.5) base=synstd/php ;; esac
 verify_php "$base:$VERSION" "$VERSION"
