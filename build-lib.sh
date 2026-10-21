@@ -10,7 +10,7 @@ export RELEASE_ID LOG_DIR
 configure_build_transport() {
   local -n transport_flags="$1"
   if [[ -n "${BUILD_PROXY:-}" ]]; then
-    local bypass="${BUILD_NO_PROXY:-localhost,127.0.0.1,mirror.yandex.ru,archive.ubuntu.com,security.ubuntu.com}"
+    local bypass="${BUILD_NO_PROXY:-localhost,127.0.0.1,mirror.yandex.ru,archive.ubuntu.com,security.ubuntu.com,ppa.launchpadcontent.net}"
     transport_flags+=(--network=host
       --build-arg "http_proxy=$BUILD_PROXY" --build-arg "https_proxy=$BUILD_PROXY"
       --build-arg "HTTP_PROXY=$BUILD_PROXY" --build-arg "HTTPS_PROXY=$BUILD_PROXY"

@@ -3,7 +3,7 @@ set -euo pipefail
 branch="$1"
 [[ "$branch" =~ ^(8\.[0-5]|7\.[1-4])$ ]] || exit 2
 curl_transport=()
-[[ -z "${BUILD_PROXY:-}" ]] || curl_transport+=(--proxy "$BUILD_PROXY")
+[[ -z "${BUILD_PROXY:-}" ]] || curl_transport+=(--proxy "$BUILD_PROXY" --noproxy "${BUILD_NO_PROXY:-localhost,127.0.0.1,mirror.yandex.ru,archive.ubuntu.com,security.ubuntu.com,ppa.launchpadcontent.net}")
 work=$(mktemp -d /tmp/php-package-preflight.XXXXXX)
 trap 'rm -rf "$work"' EXIT
 deadline=$((SECONDS + ${PACKAGE_WAIT_SECONDS:-3600}))
@@ -22,7 +22,7 @@ while true; do
       dpkg --compare-versions "$version" ge "$minimum" && ready=1
     elif [[ -n "$version" ]]; then
       filename=$(printf '%s\n' "$stanza" | sed -n 's/^Filename: //p')
-      if curl "${curl_transport[@]}" -4 --connect-timeout 10 --max-time 45 -fsSL "http://ppa.launchpadcontent.net/ondrej/php/ubuntu/$filename" -o "$work/common.deb"; then
+      if curl "${curl_transport[@]}" -4 --connect-timeout 10 --max-time 180 --retry 2 --retry-all-errors -fsSL "http://ppa.launchpadcontent.net/ondrej/php/ubuntu/$filename" -o "$work/common.deb"; then
         dpkg-deb -x "$work/common.deb" "$work/unpacked"
         changelog="$work/unpacked/usr/share/doc/php$branch-common/changelog.Debian.gz"
         if zgrep -q CVE-2026-109618 "$changelog" && zgrep -q CVE-2026-109619 "$changelog"; then ready=1; fi
