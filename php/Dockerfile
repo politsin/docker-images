@@ -39,7 +39,8 @@ RUN apt update -y && \
 COPY config/phpcs/no-drupal-commenting.xml /var/lib/composer/phpcs.xml
 COPY config/phpcs/composer-legacy.json /var/lib/composer/composer-legacy.json
 COPY config/phpcs/prepare-standard.php /var/lib/composer/prepare-standard.php
-RUN mkdir -p /var/lib/composer && \
+RUN --mount=type=cache,target=/root/.cache/composer,sharing=locked \
+    mkdir -p /var/lib/composer && \
     cd /var/lib/composer && \
     case "${PHP}" in \
       7.1) cp composer-legacy.json composer.json ;; \
@@ -63,7 +64,8 @@ RUN curl -SLO https://deb.nodesource.com/nsolid_setup_deb.sh && \
     rm -rf /var/lib/apt/lists/*
 
 # Init:::
-RUN npm config set fetch-retries 5 && \
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
+    npm config set fetch-retries 5 && \
     npm config set fetch-retry-mintimeout 20000 && \
     npm config set fetch-retry-maxtimeout 120000 && \
     npm i -g gulp-cli
@@ -71,12 +73,13 @@ RUN npm config set fetch-retries 5 && \
 # GulpPacs::: node-sass is an alias to Dart Sass for legacy gulpfiles.
 COPY config/frontend/package*.json /var/
 COPY config/frontend/frontend-smoke.sh /usr/local/bin/frontend-smoke.sh
-RUN cd /var && npm ci --no-audit --no-fund && \
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
+    cd /var && npm ci --no-audit --no-fund && \
     for cli in eslint stylelint editorconfig-checker ec; do \
       ln -sf /var/node_modules/.bin/${cli} /usr/local/bin/${cli}; \
     done && \
     eslint --version && stylelint --version && editorconfig-checker --version && \
-    npm cache clean --force && chmod 0755 /usr/local/bin/frontend-smoke.sh
+    chmod 0755 /usr/local/bin/frontend-smoke.sh
 
 # COPY PHP-VER-config:::
 COPY config/php/www.conf /etc/php/${PHP}/fpm/pool.d/www.conf
@@ -106,6 +109,8 @@ RUN chmod 755 /start.sh && \
     touch /var/log/ssh/ssh.log && \
     chmod 0750 /var/log/ssh && \
     chmod 0640 /var/log/ssh/ssh.log && \
+    mkdir -p /var/www/log /var/www/html && \
+    chown www-data:www-data /var/www/log /var/www/html && \
     mkdir -p /run/php && \
     chown root:www-data /var/log/ssh /var/log/ssh/ssh.log && \
     chmod -R 0755 /run/php && \
