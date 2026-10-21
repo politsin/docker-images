@@ -23,6 +23,7 @@ while read -r branch; do
     fi
   fi
   flags=(--pull=false --progress=plain --build-arg "PHP=$branch" --build-arg "BASE_IMAGE=$base")
+  configure_build_transport flags
   [[ "${NO_CACHE:-0}" != 1 ]] || flags+=(--no-cache)
   docker build "${flags[@]}" -t "$candidate" "$ROOT_DIR/backup" 2>&1 | tee "$LOG_DIR/dockup-$branch-build.txt"
   verify_php "$candidate" "$branch"
