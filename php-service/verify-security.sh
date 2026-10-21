@@ -3,6 +3,9 @@ set -eu
 branch="$1"
 actual=$(php -r 'echo PHP_VERSION;')
 case "$actual" in "$branch".*) ;; *) echo "Wrong PHP branch: $actual, expected $branch" >&2; exit 1 ;; esac
+"php-fpm${branch}" -v | grep -F "PHP $actual " >/dev/null || {
+  echo 'CLI and FPM PHP versions differ' >&2; exit 1;
+}
 minimum=""
 case "$branch" in
   8.5) minimum=8.5.12 ;; 8.4) minimum=8.4.27 ;;

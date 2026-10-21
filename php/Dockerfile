@@ -38,6 +38,7 @@ RUN apt update -y && \
 # PhpCS:::
 COPY config/phpcs/no-drupal-commenting.xml /var/lib/composer/phpcs.xml
 COPY config/phpcs/composer-legacy.json /var/lib/composer/composer-legacy.json
+COPY config/phpcs/prepare-standard.php /var/lib/composer/prepare-standard.php
 RUN mkdir -p /var/lib/composer && \
     cd /var/lib/composer && \
     case "${PHP}" in \
@@ -45,6 +46,7 @@ RUN mkdir -p /var/lib/composer && \
       *) wget https://raw.githubusercontent.com/politsin/snipets/master/patch/composer.json ;; \
     esac && \
     COMPOSER_IPRESOLVE=4 COMPOSER_MAX_PARALLEL_HTTP=1 composer install --no-progress -o && \
+    php /var/lib/composer/prepare-standard.php && \
     sed -i 's/snap/var\/lib\/composer\/vendor/g' /etc/environment && \
     /var/lib/composer/vendor/bin/phpcs -i && \
     /var/lib/composer/vendor/bin/phpcs --config-set colors 1 && \
@@ -70,6 +72,9 @@ RUN npm config set fetch-retries 5 && \
 COPY config/frontend/package*.json /var/
 COPY config/frontend/frontend-smoke.sh /usr/local/bin/frontend-smoke.sh
 RUN cd /var && npm ci --no-audit --no-fund && \
+    for cli in eslint stylelint editorconfig-checker ec; do \
+      ln -sf /var/node_modules/.bin/${cli} /usr/local/bin/${cli}; \
+    done && \
     eslint --version && stylelint --version && editorconfig-checker --version && \
     npm cache clean --force && chmod 0755 /usr/local/bin/frontend-smoke.sh
 
