@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source "$(dirname "$(readlink -f "$0")")/../build-lib.sh"
-build_php_image php
+VERSION="${VERSION:-8.5}" BUILD="${BUILD:-3}" build_php_image php

@@ -41,12 +41,13 @@ a lockfile where exact project-specific versions are required.
 ## Building
 
 From the repository root, `./build-php-stack.sh` builds PHP 8.5 down to 7.1,
-in descending order. For a subset use `./build-php-stack.sh 8.5 8.3 7.4`.
+in descending order. Targets use the existing `VERSION SERVICE_BUILD PHP_BUILD` interface, e.g.
+`./build-php-stack.sh "8.5 8 10" "8.3 8 11"`.
 Each PHP-service and PHP image is checked and pushed as soon as it is built.
 The Ubuntu image is pulled once and pinned by digest for the whole run;
 the common OS stage is reused. Do not use `NO_CACHE=1` unless intentionally
-rebuilding every common layer. `RELEASE_ID` controls immutable build tags and
-the log directory under `report/`. Only PHP 8.5 updates `latest`.
+rebuilding every common layer. Image tags retain the existing `VERSION.BUILD` numbering.
+`RELEASE_ID` selects only the log directory under `report/`. Only PHP 8.5 updates `latest`.
 
 `grpc` and `dio` are enabled only in PHP 8.3, 8.4, and 8.5.
 The security gate checks today's fixed releases (8.5.12 / 8.4.27 / 8.3.36 /
@@ -68,8 +69,8 @@ The publication check rejects an image containing runtime proxy variables.
 Composer and npm downloads use BuildKit cache mounts shared across PHP variants;
 these caches are retained by the builder and are not included in image layers.
 
-After PHP completes, `RELEASE_ID=<same-id> ./backup/build.sh 8.5 8.3 8.1`
-builds and pushes the requested dockup variants using the local checked bases.
+After PHP completes, build dockup with its existing `VERSION` / `BUILD`
+environment interface, e.g. `VERSION=8.5 BUILD=1 ./backup/build.sh`.
 Freshly built bases are never replaced with a remote tag by `--pull`.
 
 Security reference: https://www.php.net/index.php#2026-10-21-1
