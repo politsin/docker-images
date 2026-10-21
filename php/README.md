@@ -54,22 +54,19 @@ The security gate checks today's fixed releases (8.5.12 / 8.4.27 / 8.3.36 /
 CVE-2026-109618 and CVE-2026-109619 in the installed package changelog.
 A package that fails this gate must not be published as an update.
 
-When the PPA index still lags a successful vendor build, the release can use
-`php-service/security-sources.json`. This locks a **noble amd64** Launchpad
-build and the SHA256 of its `.changes` manifest. The installer verifies that
-manifest and every downloaded core `.deb` against its SHA256, and updates only
-PHP core packages already installed in the image. External extensions continue
-to come from the signed PPA. The manifest remains in the image under
-`/usr/local/share/php-security/` for audit. If apt already provides the locked
-version or newer, no artifact override runs. Update these locks for future
-security releases; do not substitute binaries built for a different Ubuntu
-release or architecture.
+PHP core and extensions are installed only through the signed Ondrej PPA.
+The preflight reads its current package index, waits for security fixes, and
+passes the selected CLI/FPM package version into the build. There is no
+manual vendor-artifact installation path. Apt verifies repository signatures
+and package checksums.
 
 If the builder needs a temporary transport, set `BUILD_PROXY` to a reachable
 HTTP proxy. The scripts use host networking and predefined Docker proxy build
 arguments; they never set proxy variables in the runtime image. `BUILD_NO_PROXY`
 can override the default bypass list for Ubuntu mirrors and loopback addresses.
 The publication check rejects an image containing runtime proxy variables.
+Composer and npm downloads use BuildKit cache mounts shared across PHP variants;
+these caches are retained by the builder and are not included in image layers.
 
 After PHP completes, `RELEASE_ID=<same-id> ./backup/build.sh 8.5 8.3 8.1`
 builds and pushes the requested dockup variants using the local checked bases.

@@ -137,7 +137,10 @@ ARG PHP="8.4"
 ARG PHP_PACKAGE_VERSION="latest"
 # Ondrej PPA does not publish Ubuntu 26.04 packages yet. Keep the OS base on
 # 26.04 and use noble only for the PHP repo plus missing PHP ABI dependencies.
-RUN find /etc/apt -type f \( -name '*.sources' -o -name '*.list' \) -exec sed -i -e 's|http://archive.ubuntu.com/ubuntu|http://mirror.yandex.ru/ubuntu|g' -e 's|http://security.ubuntu.com/ubuntu|http://mirror.yandex.ru/ubuntu|g' {} + && \
+RUN set -eu; \
+    php_package_constraint=""; \
+    if [ "${PHP_PACKAGE_VERSION}" != latest ]; then php_package_constraint="=${PHP_PACKAGE_VERSION}"; fi; \
+    find /etc/apt -type f \( -name '*.sources' -o -name '*.list' \) -exec sed -i -e 's|http://archive.ubuntu.com/ubuntu|http://mirror.yandex.ru/ubuntu|g' -e 's|http://security.ubuntu.com/ubuntu|http://mirror.yandex.ru/ubuntu|g' {} + && \
     LC_ALL=C.UTF-8 add-apt-repository --no-update -y ppa:ondrej/php || true && \
     find /etc/apt/sources.list.d -type f -name '*ondrej*php*.sources' -exec sed -i -e 's/^Suites: .*/Suites: noble/' -e 's|https://ppa.launchpadcontent.net|http://ppa.launchpadcontent.net|g' {} + && \
     find /etc/apt/sources.list.d -type f -name '*ondrej*php*.list' -exec sed -i -e 's/[[:space:]]resolute[[:space:]]/[[:space:]]noble[[:space:]]/g' -e 's|https://ppa.launchpadcontent.net|http://ppa.launchpadcontent.net|g' {} + && \
@@ -151,7 +154,7 @@ RUN find /etc/apt -type f \( -name '*.sources' -o -name '*.list' \) -exec sed -i
     apt update && \
     apt install -y php${PHP} --no-install-recommends --dry-run && \
 	apt purge apache2 apache2-bin && \
-    apt install -y --no-install-recommends php${PHP}-cli \
+    apt install -y --no-install-recommends "php${PHP}-cli${php_package_constraint}" \
                    php${PHP}-dev \
                    php${PHP}-dom \
                    php${PHP}-zip \
@@ -168,7 +171,7 @@ RUN find /etc/apt -type f \( -name '*.sources' -o -name '*.list' \) -exec sed -i
     apt install -y --no-install-recommends php${PHP}-gd  \
                    php${PHP}-bz2 \
                    php${PHP}-gmp \
-                   php${PHP}-fpm \
+                   "php${PHP}-fpm${php_package_constraint}" \
                    php${PHP}-apcu \
                    php${PHP}-intl \
                    php${PHP}-ldap \
@@ -191,12 +194,6 @@ RUN update-alternatives --set php /usr/bin/php${PHP} && \
     update-alternatives --set phpize /usr/bin/phpize${PHP} && \
     update-alternatives --set php-config /usr/bin/php-config${PHP} && \
     echo '' > /etc/php/${PHP}/mods-available/xdebug.ini
-
-# A successful Launchpad build may precede publication of its PPA index.
-# Upgrade only core packages from locked noble/amd64 artifacts in that case.
-COPY security-sources.json /usr/local/share/php-security/sources.json
-COPY install-security-packages.py /usr/local/bin/install-php-security-packages
-RUN python3 /usr/local/bin/install-php-security-packages ${PHP}
 
 # Reject unpatched packages before spending time compiling extensions.
 COPY verify-security.sh /usr/local/bin/verify-php-security
