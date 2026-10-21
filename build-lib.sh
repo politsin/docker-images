@@ -41,7 +41,6 @@ verify_php() {
 publish_php() {
   local image="$1" branch="$2" candidate="$3" tag
   local tags=("${branch}.${BUILD:?Set BUILD to the next existing image build number}" "${branch}-amd64" "$branch")
-  [[ "$branch" != 8.5 ]] || tags+=(latest)
   for tag in "${tags[@]}"; do
     docker tag "$candidate" "$image:$tag"
     docker push "$image:$tag" | tee "$LOG_DIR/${image##*/}-${tag}-push.txt"

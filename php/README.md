@@ -47,7 +47,7 @@ Each PHP-service and PHP image is checked and pushed as soon as it is built.
 The Ubuntu image is pulled once and pinned by digest for the whole run;
 the common OS stage is reused. Do not use `NO_CACHE=1` unless intentionally
 rebuilding every common layer. Image tags retain the existing `VERSION.BUILD` numbering.
-`RELEASE_ID` selects only the log directory under `report/`. Only PHP 8.5 updates `latest`.
+`RELEASE_ID` selects only the log directory under `report/`.
 
 `grpc` and `dio` are enabled only in PHP 8.3, 8.4, and 8.5.
 The security gate checks today's fixed releases (8.5.12 / 8.4.27 / 8.3.36 /
